@@ -213,6 +213,45 @@ const UserDetail = mongoose.model('userdetails', {
     imageURL: [String],
     videoURL: [String],
   });
+  const Journal = mongoose.model('journals', {
+    title: String,
+    overview: [String],
+    description: [String],
+    keypoints: [String],
+    imageURL: [String],
+    videoURL: [String],
+  });
+
+
+const VsCodeSchema = new mongoose.Schema({
+  title: String,
+  overview: [String],
+  description: [String],
+  keypoints: [String],
+  imageURL: [String],
+  videoURL: [String],
+});
+
+// Define schema for CSS courses
+const GitSchema = new mongoose.Schema({
+  title: String,
+  overview: [String],
+  description: [String],
+  keypoints: [String],
+  imageURL: [String],
+  videoURL: [String],
+});
+
+const VsCode = mongoose.model('vs_code_articles', VsCodeSchema);
+
+const Git = mongoose.model('git_articles', GitSchema);
+
+// Export the models
+module.exports = {
+  VsCode,
+  Git,
+  
+};
 
 
 // Endpoint to get the current resume download count
@@ -252,7 +291,63 @@ app.get('/api/certifications/:title', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-  
+   //new api for talks
+app.get('/api/:vision', async (req, res) => {
+  const { vision } = req.params;
+  try {
+    let talkContent;
+    // Fetch course content based on the provided vision
+    switch (vision) {
+      case 'vs_code_articles':
+        talkContent = await VsCode.find().lean();
+        break;
+      case 'git_articles':
+        talkContent = await Git.find().lean();
+        break;
+      default:
+        // Check if the vision matches any library in the database
+        const library = await mydb.collection(vision).find().toArray();
+        if (library.length > 0) {
+          talkContent = library;
+        } else {
+          return res.status(404).json({ error: 'Class not found' });
+        }
+    }
+
+    if (talkContent.length > 0) {
+      return res.json(talkContent);
+    } else {
+      return res.status(404).json({ error: 'Talk not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching journal content:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/vision/:vision', async (req, res) => {
+  try {
+    const vision = req.params.vision;
+    if (vision === 'all') {
+      const journal = await Journal.find();
+      res.json(journal);
+    } else {
+      const journal = await Journal.find({ vision });
+      res.json(journal);
+    }
+  } catch (error) {
+    console.error('Error fetching journal:', error);
+    res.status(500).json({ error: 'Error fetching journal' });
+  }
+});
+
+
+
+
+
+
+
+
 
 
  app.get('/api/:collection', async (req, res) => {

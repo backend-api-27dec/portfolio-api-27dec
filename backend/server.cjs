@@ -302,7 +302,7 @@ app.get('/comments', async (req, res) => {
 // Endpoint to get the current ratings
 app.get('/stars', async (req, res) => {
   try {
-    const ratings = await Stars.find({});
+    const ratings = await Star.find({});
     res.json(stars);
   } catch (error) {
     console.error('Error fetching ratings:', error);

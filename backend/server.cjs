@@ -264,7 +264,7 @@ const Comment = mongoose.model('Comment', commentSchema);
 // Define a schema for the ratings
 const starSchema = new mongoose.Schema({
   userId: String,
-  rating: Number,
+  star: Number,
 });
 
 // Define a model based on the schema

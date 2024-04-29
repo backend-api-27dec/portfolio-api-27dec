@@ -316,7 +316,7 @@ app.post('/stars', async (req, res) => {
   try {
     const existingStar = await Star.findOneAndUpdate(
       { userId },
-      { rating },
+      { star },
       { upsert: true, new: true }
     );
     res.json(existingStar);

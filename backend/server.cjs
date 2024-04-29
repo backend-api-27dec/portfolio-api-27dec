@@ -268,7 +268,7 @@ const starSchema = new mongoose.Schema({
 });
 
 // Define a model based on the schema
-const Star = mongoose.model('Star', ratingSchema);
+const Star = mongoose.model('Star', starSchema);
 
 
 

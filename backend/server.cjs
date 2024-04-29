@@ -253,6 +253,80 @@ module.exports = {
   
 };
 
+const commentSchema = new mongoose.Schema({
+  username: String,
+  comment: String,
+});
+
+// Define a model based on the schema
+const Comment = mongoose.model('Comment', commentSchema);
+
+// Define a schema for the ratings
+const starSchema = new mongoose.Schema({
+  userId: String,
+  rating: Number,
+});
+
+// Define a model based on the schema
+const Star = mongoose.model('Star', ratingSchema);
+
+
+
+
+
+
+// Endpoint to post a review
+app.post('/comments', async (req, res) => {
+  const { username, comment } = req.body;
+  try {
+    const newComment = new Comment({ username, comment });
+    await newComment.save();
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('Error posting review:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to get all reviews
+app.get('/comments', async (req, res) => {
+  try {
+    const comments = await Comment.find({});
+    res.json(comments);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to get the current ratings
+app.get('/stars', async (req, res) => {
+  try {
+    const ratings = await Stars.find({});
+    res.json(stars);
+  } catch (error) {
+    console.error('Error fetching ratings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint to update the ratings
+app.post('/stars', async (req, res) => {
+  const { userId, star } = req.body;
+  try {
+    const existingStar = await Star.findOneAndUpdate(
+      { userId },
+      { rating },
+      { upsert: true, new: true }
+    );
+    res.json(existingStar);
+  } catch (error) {
+    console.error('Error updating ratings:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 // Endpoint to get the current resume download count
 app.get('/api/get-resume-click-count', async (req, res) => {
